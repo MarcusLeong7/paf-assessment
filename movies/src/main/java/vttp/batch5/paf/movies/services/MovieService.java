@@ -19,7 +19,7 @@ public class MovieService {
   private MongoMovieRepository mongoRepo;
 
   // TODO: Task 2
-  @Transactional
+  /*@Transactional
   public void createMovie(List<Movie> movie) {
 
     try{
@@ -31,7 +31,7 @@ public class MovieService {
     } catch (Exception e) {
       throw new RuntimeException("Error inserting movie: " + e.getMessage());
     }
-  }
+  }*/
   
 
   // TODO: Task 3

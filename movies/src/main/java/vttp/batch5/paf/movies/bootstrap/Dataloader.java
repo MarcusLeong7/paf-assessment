@@ -1,6 +1,7 @@
 package vttp.batch5.paf.movies.bootstrap;
 
 import jakarta.json.*;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import vttp.batch5.paf.movies.repositories.MongoMovieRepository;
 
 import java.io.*;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -55,13 +57,30 @@ public class Dataloader implements CommandLineRunner {
     private void readZip(ZipInputStream zis) throws IOException {
         InputStreamReader inputStream = new InputStreamReader(zis);
         BufferedReader br = new BufferedReader(inputStream);
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 
         logger.info("### Reading JSON file:");
         String line;
         System.out.println("Contents:");
         while ((line = br.readLine()) != null) {
-            System.out.println(line);
+            line = line.trim();
+            if (line.startsWith("{") && line.endsWith("}")) {
+                try (JsonReader jsonReader = Json.createReader(new StringReader(line))) {
+                    JsonObject jsonObject = jsonReader.readObject();
+                    jsonArrayBuilder.add(jsonObject);
+                }
+                /*System.out.println(line);*/
+            }
+            JsonArray arr = jsonArrayBuilder.build();
+            if (!arr.isEmpty()) {
+                List<Document> documentList = arr.stream()
+                        .map(j -> Document.parse(j.toString()))
+                        .toList();
+                mongoRepo.batchInsertMovies(documentList, "imdb");
+
+            }
         }
+        br.close();
         System.out.println(">>> END OF FILE <<<");
 
 
