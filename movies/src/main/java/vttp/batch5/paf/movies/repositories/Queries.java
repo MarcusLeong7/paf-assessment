@@ -12,4 +12,6 @@ public class Queries {
                                                  budget = values(budget),
                                                  runtime = values(runtime)
             """;
+
+    public static final String SQL_GET_ALL_MOVIES = "select * from imdb";
 }

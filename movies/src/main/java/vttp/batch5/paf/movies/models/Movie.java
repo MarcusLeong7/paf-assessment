@@ -11,6 +11,15 @@ public class Movie {
     private float revenue;
     private float budget;
     private int runtime;
+    private float earnings;
+
+    public float getEarnings() {
+        return earnings;
+    }
+
+    public void setEarnings(float earnings) {
+        this.earnings = earnings;
+    }
 
     public String getImdbId() {
         return imdbId;

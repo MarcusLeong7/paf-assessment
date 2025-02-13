@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import vttp.batch5.paf.movies.models.Movie;
 import vttp.batch5.paf.movies.models.MovieMongo;
 import vttp.batch5.paf.movies.repositories.MongoMovieRepository;
+import vttp.batch5.paf.movies.repositories.MySQLMovieRepository;
 import vttp.batch5.paf.movies.services.MovieService;
 
 import java.io.*;
@@ -26,6 +27,12 @@ public class Dataloader implements CommandLineRunner {
 
     @Autowired
     private MovieService movieSvc;
+
+    @Autowired
+    private MongoMovieRepository mongoRepo;
+
+    @Autowired
+    private MySQLMovieRepository sqlRepo;
 
     private final Logger logger = Logger.getLogger(Dataloader.class.getName());
 
@@ -66,7 +73,7 @@ public class Dataloader implements CommandLineRunner {
         BufferedReader br = new BufferedReader(inputStream);
         List<Document> filteredDocuments = new ArrayList<>();
         List<Movie> movieList = new ArrayList<>();
-        /*JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();*/
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 
         logger.info("### Reading JSON file:");
         String line;
@@ -101,7 +108,13 @@ public class Dataloader implements CommandLineRunner {
                             .add("imdb_votes", imdbVotes)
                             .build();
 
-                    filteredDocuments.add(Document.parse(obj.toString()));
+                    Document document = Document.parse(obj.toString());
+                    filteredDocuments.add(document);
+                    for (Document doc : filteredDocuments) {
+                        mongoRepo.batchInsertMovies(doc);
+                    }
+
+
                     /*System.out.println(filteredDocuments.size());*/
 
                     int voteAverage = jsonObject.containsKey("vote_average")
@@ -139,10 +152,10 @@ public class Dataloader implements CommandLineRunner {
 
                 /*System.out.println(line);*/
             }
-            if (!filteredDocuments.isEmpty() && !movieList.isEmpty()) {
-                movieSvc.createMovie(movieList,filteredDocuments);
+            if ( !movieList.isEmpty()) {
+                sqlRepo.batchInsertMovies(movieList);
+               /* movieSvc.createMovie(movieList,filteredDocuments);*/
             }
-
 
 
           /*  JsonArray arr = jsonArrayBuilder.build();
@@ -150,7 +163,7 @@ public class Dataloader implements CommandLineRunner {
                 List<Document> documentList = arr.stream()
                         .map(j -> Document.parse(j.toString()))
                         .toList();
-                *//*mongoRepo.batchInsertMovies(documentList, "imdb");*//*
+                mongoRepo.batchInsertMovies(documentList, "imdb");
             }*/
         }
         br.close();
