@@ -4,6 +4,8 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
+import vttp.batch5.paf.movies.models.Movie;
+import vttp.batch5.paf.movies.models.MovieMongo;
 
 import java.util.List;
 
@@ -26,11 +28,12 @@ public class MongoMovieRepository {
  //            tagline:"",genres:"",imdb_rating:10,imdb_votes:10000 },
  //      { imdb_id:"",title:"",director:"",overview:"",
  //            tagline:"",genres:"",imdb_rating:10,imdb_votes:10000 } ])
- public void batchInsertMovies(List<Document> docs, String colName) {
+ public boolean batchInsertMovies(List<Document> docs, String colName) {
   if (docs == null || docs.isEmpty()) {
-   return; // To avoid inserting empty data
+   return false; // To avoid inserting empty data
   }
   template.insert(docs, colName);
+  return true;
  }
 
  // TODO: Task 2.4

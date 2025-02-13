@@ -19,13 +19,15 @@ public class MySQLMovieRepository {
 
     // TODO: Task 2.3
     // You can add any number of parameters and return any type from the method
-    public int[] batchInsertMovies(List<Movie> movies) {
+    public boolean batchInsertMovies(List<Movie> movies) {
         List<Object[]> params = movies.stream()
                 .map(movie -> new Object[]{movie.getImdbId(), movie.getVoteAverage(), movie.getVoteCount(),
                         movie.getReleaseDate(), movie.getRevenue(), movie.getBudget(), movie.getRuntime()})
                 .collect(Collectors.toList());
 
-        return template.batchUpdate(SQL_INSERT_MOVIE, params);
+        int added[] = template.batchUpdate(SQL_INSERT_MOVIE, params);
+        return added.length == movies.size();
+
     }
 
     // TODO: Task 3

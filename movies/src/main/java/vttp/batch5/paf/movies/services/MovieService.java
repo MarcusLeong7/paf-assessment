@@ -1,5 +1,6 @@
 package vttp.batch5.paf.movies.services;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,19 +20,20 @@ public class MovieService {
   private MongoMovieRepository mongoRepo;
 
   // TODO: Task 2
-  /*@Transactional
-  public void createMovie(List<Movie> movie) {
+  @Transactional
+  public void createMovie(List<Movie> movie,List<Document> docs) {
 
     try{
-
+      while (docs.size() <= 25){
+        mongoRepo.batchInsertMovies(docs,"imdb");
+      }
       sqlRepo.batchInsertMovies(movie);
-
 
       System.out.println("Movie inserted successfully!");
     } catch (Exception e) {
       throw new RuntimeException("Error inserting movie: " + e.getMessage());
     }
-  }*/
+  }
   
 
   // TODO: Task 3
