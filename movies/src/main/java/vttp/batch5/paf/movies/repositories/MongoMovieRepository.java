@@ -15,6 +15,9 @@ public class MongoMovieRepository {
  @Autowired
  private MongoTemplate template;
 
+ @Autowired
+ private MySQLMovieRepository sqlRepo;
+
  // TODO: Task 2.3
  // You can add any number of parameters and return any type from the method
  // You can throw any checked exceptions from the method
@@ -32,7 +35,7 @@ public class MongoMovieRepository {
   if (docs == null || docs.isEmpty()) {
    return false; // To avoid inserting empty data
   }
-  template.insert(docs, colName);
+  template.save(docs, colName);
   return true;
  }
 

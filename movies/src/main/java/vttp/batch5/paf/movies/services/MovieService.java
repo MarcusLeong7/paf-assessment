@@ -24,10 +24,11 @@ public class MovieService {
   public void createMovie(List<Movie> movie,List<Document> docs) {
 
     try{
-      while (docs.size() <= 25){
-        mongoRepo.batchInsertMovies(docs,"imdb");
-      }
+
       sqlRepo.batchInsertMovies(movie);
+
+      mongoRepo.batchInsertMovies(docs,"imdb");
+
 
       System.out.println("Movie inserted successfully!");
     } catch (Exception e) {
